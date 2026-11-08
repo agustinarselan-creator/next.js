@@ -1,0 +1,12 @@
+{
+  "name": "lumbre-generador-imagenes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Generador de imágenes local con API de OpenAI",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
