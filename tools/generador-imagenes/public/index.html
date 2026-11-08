@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10100f">
+  <title>Lumbre — Generador de imágenes</title>
+  <style>
+    :root{color-scheme:dark;--bg:#10100f;--panel:#171716;--panel2:#1d1d1b;--line:#30302d;--ink:#f0eee8;--muted:#aaa79e;--soft:#77746d;--accent:#e7a867;--accent2:#d89551;--danger:#f09a8a}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 5%,#302319 0,transparent 32rem),var(--bg);color:var(--ink);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    button,textarea,select{font:inherit}button{cursor:pointer}a{color:var(--accent)}
+    .shell{max-width:1200px;margin:auto;padding:28px 34px 50px}.top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:2px 0 22px}
+    .brand{display:flex;align-items:center;gap:12px}.mark{width:37px;height:37px;border:1px solid #916846;border-radius:12px;display:grid;place-items:center;color:var(--accent);font-size:19px;background:#211a14}.brand-name{font-size:17px;font-weight:700;letter-spacing:.04em}.brand-sub{font-size:12px;color:var(--muted)}
+    .api-pill{font-size:12px;color:#b9d7b8;border:1px solid #304633;background:#17251a;border-radius:999px;padding:7px 12px;display:flex;align-items:center;gap:8px}.dot{width:7px;height:7px;background:#85c88d;border-radius:50%}
+    .intro{padding:34px 0 26px}.eyebrow{color:var(--accent);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}.intro h1{font-size:clamp(30px,4vw,46px);letter-spacing:-.04em;line-height:1.08;margin:9px 0 10px}.intro p{color:var(--muted);margin:0;max-width:620px}
+    .layout{display:grid;grid-template-columns:minmax(320px,.88fr) minmax(360px,1.12fr);gap:18px;align-items:stretch}.card{background:#151514e8;border:1px solid var(--line);border-radius:18px;overflow:hidden}.card-head{padding:18px 20px 14px;border-bottom:1px solid #292927;display:flex;align-items:center;justify-content:space-between}.card-head strong{font-size:14px}.subtle{font-size:12px;color:var(--soft)}
+    .form{padding:18px 20px 20px}.label-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.label{font-size:13px;font-weight:600}.counter{font-size:11px;color:var(--soft)}
+    textarea{display:block;width:100%;min-height:146px;resize:vertical;border:1px solid #3a3935;border-radius:12px;background:#111110;color:var(--ink);padding:13px 14px;outline:none;line-height:1.55}textarea:focus,select:focus{border-color:#a8794e;box-shadow:0 0 0 3px #a8794e25}
+    textarea::placeholder{color:#77746e}.suggestions{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 19px}.chip{border:1px solid #383733;background:#1d1d1a;color:#c9c5bc;padding:6px 9px;border-radius:999px;font-size:11px}.chip:hover{border-color:#a8794e;color:#f4c38f}
+    .settings{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:12px;color:#cac6bd;margin-bottom:7px}.field select{width:100%;background:#111110;border:1px solid #383733;color:var(--ink);border-radius:10px;padding:10px 11px;outline:0}
+    .switch-row{display:flex;justify-content:space-between;align-items:center;margin-top:15px;padding:11px 0 2px}.switch-copy{font-size:12px;color:#ddd9d0}.switch-copy small{display:block;color:var(--soft);font-size:11px}.switch{position:relative;width:39px;height:22px}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;border-radius:30px;background:#45433e;transition:.2s}.slider:before{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:white;transition:.2s}.switch input:checked+.slider{background:#ad784a}.switch input:checked+.slider:before{transform:translateX(17px)}
+    .generate{margin-top:16px;width:100%;border:0;border-radius:11px;background:linear-gradient(135deg,#f1bd83,#d8904e);color:#21150c;font-weight:750;padding:13px 15px;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 7px 22px #d5904b20}.generate:hover{filter:brightness(1.06);transform:translateY(-1px)}.generate:disabled{opacity:.65;cursor:wait;transform:none}.spark{font-size:17px}
+    .hint{font-size:11px;color:var(--soft);margin:12px 0 0;line-height:1.5}.hint kbd{border:1px solid #3a3935;border-radius:4px;padding:1px 4px;color:#c7c1b8}
+    .result-card{min-height:570px;display:flex;flex-direction:column}.result-wrap{flex:1;display:grid;place-items:center;padding:22px;min-height:395px;position:relative}
+    .empty{width:min(100%,430px);aspect-ratio:1.16;border:1px dashed #41403b;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:28px;background:radial-gradient(circle at 55% 55%,#211c17 0,transparent 58%)}
+    .empty-icon{width:54px;height:54px;border-radius:17px;background:#28221b;color:#dcaa76;display:grid;place-items:center;font-size:23px;margin-bottom:14px;border:1px solid #423426}.empty h2{font-size:16px;margin:0 0 5px}.empty p{font-size:12px;color:var(--soft);max-width:270px;margin:0}
+    .loading{display:none;text-align:center;color:var(--muted)}.loader{width:44px;height:44px;border:3px solid #393631;border-top-color:var(--accent);border-radius:50%;margin:0 auto 15px;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    .output{display:none;max-width:100%;max-height:540px;border-radius:12px;box-shadow:0 18px 55px #0009;object-fit:contain}.result-actions{display:none;justify-content:space-between;align-items:center;padding:14px 18px;border-top:1px solid #292927}.download{background:#29231d;border:1px solid #634b35;color:#f2c18f;border-radius:9px;padding:8px 12px;font-weight:600;font-size:12px}.download:hover{background:#35291d}.result-note{font-size:11px;color:var(--soft)}
+    .message{display:none;margin-top:13px;padding:10px 12px;background:#2c1916;border:1px solid #59332b;color:#f3b0a3;border-radius:9px;font-size:12px;word-break:break-word}
+    .foot{margin-top:18px;display:flex;gap:10px;align-items:flex-start;padding:13px 15px;border:1px solid #3a332b;background:#1b1815;border-radius:12px;color:#bdb6aa;font-size:11px}.foot-icon{color:var(--accent);font-size:15px}
+    @media(max-width:820px){.shell{padding:20px 17px 35px}.layout{grid-template-columns:1fr}.result-card{min-height:460px}.result-wrap{min-height:320px}.intro{padding:26px 0 20px}}
+    @media(max-width:480px){.api-pill{font-size:0;padding:9px}.api-pill .dot{margin:0}.settings{gap:9px}.form{padding:16px}.card-head{padding:15px 16px}.intro h1{font-size:34px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="top">
+      <div class="brand"><div class="mark" aria-hidden="true">✳</div><div><div class="brand-name">LUMBRE</div><div class="brand-sub">Tu taller de imágenes</div></div></div>
+      <div class="api-pill"><span class="dot"></span> Generación en la nube</div>
+    </header>
+    <section class="intro">
+      <div class="eyebrow">Del texto a la imagen</div>
+      <h1>Imaginá. Escribí. Creá.</h1>
+      <p>Describí lo que tenés en mente y convertí tus ideas en imágenes en unos instantes.</p>
+    </section>
+    <section class="layout">
+      <section class="card">
+        <div class="card-head"><strong>Tu idea</strong><span class="subtle">01 / 02</span></div>
+        <div class="form">
+          <div class="label-row"><label class="label" for="prompt">¿Qué querés crear?</label><span class="counter" id="counter">0 / 8000</span></div>
+          <textarea id="prompt" maxlength="8000" placeholder="Un zorro rojo leyendo bajo un árbol en otoño, luz cálida de atardecer, ilustración editorial con textura de acuarela..."></textarea>
+          <div class="suggestions" aria-label="Ideas de estilo">
+            <button class="chip" type="button" data-add="Fotografía cinematográfica, luz dramática">Cine</button>
+            <button class="chip" type="button" data-add="Ilustración digital, colores suaves y detalles delicados">Ilustración</button>
+            <button class="chip" type="button" data-add="Pintura al óleo, pinceladas visibles y paleta rica">Óleo</button>
+            <button class="chip" type="button" data-add="Arte pixelado retro, píxeles nítidos y paleta limitada">Pixel art</button>
+            <button class="chip" type="button" data-add="Render 3D, materiales detallados y luz de estudio">3D</button>
+          </div>
+          <div class="settings">
+            <div class="field"><label for="size">Formato</label><select id="size"><option value="1024x1024">Cuadrado</option><option value="1536x1024">Horizontal</option><option value="1024x1536">Vertical</option></select></div>
+            <div class="field"><label for="quality">Calidad</label><select id="quality"><option value="medium">Equilibrada</option><option value="low">Rápida</option><option value="high">Alta</option></select></div>
+          </div>
+          <div class="switch-row"><div class="switch-copy">Fondo transparente<small>Ideal para stickers y logos</small></div><label class="switch"><input id="transparent" type="checkbox" aria-label="Fondo transparente"><span class="slider"></span></label></div>
+          <button class="generate" id="generate" type="button"><span class="spark">✦</span><span>Generar imagen</span></button>
+          <p class="hint">La generación usa la API de OpenAI y puede tener costo. <kbd>Ctrl</kbd> + <kbd>Enter</kbd> para generar.</p>
+          <div class="message" id="message" role="alert"></div>
+        </div>
+      </section>
+      <section class="card result-card">
+        <div class="card-head"><strong>Tu creación</strong><span class="subtle" id="status-label">Esperando una idea</span></div>
+        <div class="result-wrap">
+          <div class="empty" id="empty"><div class="empty-icon">✧</div><h2>Tu próxima imagen empieza acá</h2><p>Escribí una descripción y tocá “Generar imagen” para ver el resultado.</p></div>
+          <div class="loading" id="loading"><div class="loader"></div><div>Creando tu imagen…</div><small class="subtle">Puede tardar un momento</small></div>
+          <img class="output" id="output" alt="Imagen generada">
+        </div>
+        <div class="result-actions" id="result-actions"><span class="result-note">PNG · Tu imagen se procesa desde tu conexión</span><button class="download" id="download" type="button">↓ Descargar imagen</button></div>
+      </section>
+    </section>
+    <aside class="foot"><span class="foot-icon">ⓘ</span><span>La app envía tu descripción a la API de OpenAI para crear la imagen. La clave de API se configura en tu computadora y no se guarda en esta página. Tu suscripción a ChatGPT no incluye crédito de API; necesitás una clave y facturación habilitada en la plataforma de API.</span></aside>
+  </main>
+  <script>
+    const promptInput = document.querySelector('#prompt');
+    const counter = document.querySelector('#counter');
+    const generateButton = document.querySelector('#generate');
+    const message = document.querySelector('#message');
+    const empty = document.querySelector('#empty');
+    const loading = document.querySelector('#loading');
+    const output = document.querySelector('#output');
+    const actions = document.querySelector('#result-actions');
+    const statusLabel = document.querySelector('#status-label');
+    let currentUrl = '';
+
+    promptInput.addEventListener('input', () => {
+      counter.textContent = `${promptInput.value.length} / 8000`;
+    });
+
+    document.querySelectorAll('[data-add]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const suffix = button.dataset.add;
+        promptInput.value = promptInput.value.trim()
+          ? `${promptInput.value.trim()}, ${suffix.toLowerCase()}`
+          : suffix;
+        promptInput.dispatchEvent(new Event('input'));
+        promptInput.focus();
+      });
+    });
+
+    function setBusy(busy) {
+      generateButton.disabled = busy;
+      generateButton.innerHTML = busy
+        ? '<span class="spark">✦</span><span>Generando…</span>'
+        : '<span class="spark">✦</span><span>Generar imagen</span>';
+      loading.style.display = busy ? 'block' : 'none';
+      empty.style.display = busy ? 'none' : (output.src ? 'none' : 'flex');
+      statusLabel.textContent = busy ? 'Creando…' : (output.src ? 'Lista para descargar' : 'Esperando una idea');
+    }
+
+    async function generate() {
+      const prompt = promptInput.value.trim();
+      message.style.display = 'none';
+      if (!prompt) {
+        message.textContent = 'Escribí una descripción antes de generar.';
+        message.style.display = 'block';
+        promptInput.focus();
+        return;
+      }
+      setBusy(true);
+      try {
+        const response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            prompt,
+            size: document.querySelector('#size').value,
+            quality: document.querySelector('#quality').value,
+            transparent: document.querySelector('#transparent').checked,
+          }),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'No se pudo generar la imagen.');
+        if (currentUrl) URL.revokeObjectURL(currentUrl);
+        const bytes = Uint8Array.from(atob(result.image), (char) => char.charCodeAt(0));
+        const blob = new Blob([bytes], { type: 'image/png' });
+        currentUrl = URL.createObjectURL(blob);
+        output.src = currentUrl;
+        output.style.display = 'block';
+        actions.style.display = 'flex';
+        empty.style.display = 'none';
+        statusLabel.textContent = 'Lista para descargar';
+      } catch (error) {
+        message.textContent = error.message || 'Ocurrió un error. Revisá tu conexión e inténtalo otra vez.';
+        message.style.display = 'block';
+        statusLabel.textContent = 'No se pudo generar';
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    generateButton.addEventListener('click', generate);
+    promptInput.addEventListener('keydown', (event) => {
+      if (event.ctrlKey && event.key === 'Enter') generate();
+    });
+    document.querySelector('#download').addEventListener('click', () => {
+      if (!currentUrl) return;
+      const link = document.createElement('a');
+      link.href = currentUrl;
+      link.download = `lumbre-${new Date().toISOString().replace(/[:.]/g, '-')}.png`;
+      link.click();
+    });
+    window.addEventListener('beforeunload', () => {
+      if (currentUrl) URL.revokeObjectURL(currentUrl);
+    });
+  </script>
+</body>
+</html>
